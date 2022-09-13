@@ -4,8 +4,8 @@ import "project/e-commerce/features/user"
 
 type UserRequest struct {
 	Name     string `json:"name" form:"name"`
-	PPicture string `json:"name" form:"name"`
-	Username string `json:"name" form:"name"`
+	PPicture string `json:"ppicture" form:"ppicture"`
+	Username string `json:"username" form:"username"`
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
 }
