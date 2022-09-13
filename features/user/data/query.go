@@ -25,3 +25,21 @@ func (repo *userData) InsertData(data user.Core) (int, error) {
 
 	return int(tx.RowsAffected), nil
 }
+
+func (repo *userData) SelectData(id int) (user.Core, error) {
+	var user User
+	tx := repo.db.First(&user, id)
+	if tx.Error != nil {
+		return user.toCore(), tx.Error
+	}
+
+	return user.toCore(), nil
+}
+
+// var user models.User
+// tx := config.DB.First(&user, id)
+// if tx.Error != nil {
+// 	return entities.UserCore{}, tx.Error
+// }
+
+// return models.ToEntities(user), nil

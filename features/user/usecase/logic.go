@@ -28,3 +28,8 @@ func (usecase *userUsecase) PostData(data user.Core) (int, error) {
 	row, err := usecase.userData.InsertData(data)
 	return row, err
 }
+
+func (usecase *userUsecase) GetData(id int) (user.Core, error) {
+	results, err := usecase.userData.SelectData(id)
+	return results, err
+}
