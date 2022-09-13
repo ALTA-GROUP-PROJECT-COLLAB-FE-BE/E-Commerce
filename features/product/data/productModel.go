@@ -8,31 +8,33 @@ import (
 
 type Product struct {
 	gorm.Model
-	Image       string
 	Name        string
-	Description string
 	Price       int
 	Qty         int
+	Image       string
+	Description string
 	UserID      uint
-	User        User
+	User        User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type User struct {
 	gorm.Model
 	Name     string
-	Email    string
+	Email    string `gorm:"unique"`
 	Password string
-	Product  []Product
+	Product  []Product `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-func (data *Product) ToCore() product.Core {
+// DTO
+
+func (data *Product) toCore() product.Core {
 	return product.Core{
 		ID:          int(data.ID),
-		Image:       data.Image,
 		Name:        data.Name,
-		Description: data.Description,
-		Qty:         data.Qty,
 		Price:       data.Price,
+		Qty:         data.Qty,
+		Image:       data.Image,
+		Description: data.Description,
 		CreatedAt:   data.CreatedAt,
 		UpdatedAt:   data.UpdatedAt,
 		User: product.User{
@@ -42,21 +44,21 @@ func (data *Product) ToCore() product.Core {
 	}
 }
 
-func ToCoreList(data []Product) []product.Core {
+func toCoreList(data []Product) []product.Core {
 	result := []product.Core{}
-	for i := range data {
-		result = append(result, data[i].ToCore())
+	for key := range data {
+		result = append(result, data[key].toCore())
 	}
 	return result
 }
 
 func FromCore(core product.Core) Product {
 	return Product{
-		Image:       core.Image,
 		Name:        core.Name,
-		Description: core.Description,
 		Price:       core.Price,
 		Qty:         core.Qty,
-		UserID:      uint(core.UserID),
+		Image:       core.Image,
+		Description: core.Description,
+		UserID:      uint(core.User.ID),
 	}
 }
