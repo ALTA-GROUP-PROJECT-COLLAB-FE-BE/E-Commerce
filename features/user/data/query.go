@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	"project/e-commerce/features/user"
 
 	"gorm.io/gorm"
@@ -36,10 +37,14 @@ func (repo *userData) SelectData(id int) (user.Core, error) {
 	return user.toCore(), nil
 }
 
-// var user models.User
-// tx := config.DB.First(&user, id)
-// if tx.Error != nil {
-// 	return entities.UserCore{}, tx.Error
-// }
+func (repo *userData) UpdateData(data user.Core, id int) (row int, err error) {
+	tx := repo.db.Model(&User{}).Where("id = ?", id).Updates(fromCore(data))
+	if tx.Error != nil {
+		return -1, tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return 0, errors.New("failed to update data")
+	}
 
-// return models.ToEntities(user), nil
+	return int(tx.RowsAffected), nil
+}
