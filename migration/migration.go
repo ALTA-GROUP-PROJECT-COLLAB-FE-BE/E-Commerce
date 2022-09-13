@@ -1,12 +1,14 @@
 package migration
 
 import (
+	userModel "project/e-commerce/features/user/data"
+
 	"gorm.io/gorm"
 )
 
 func InitMigrate(db *gorm.DB) {
 
-	// db.AutoMigrate(&Users.User{})
+	db.AutoMigrate(&userModel.User{})
 	// db.AutoMigrate(&Product.Product{})
 
 }
