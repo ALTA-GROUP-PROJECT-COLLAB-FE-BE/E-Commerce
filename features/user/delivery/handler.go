@@ -1,16 +1,12 @@
 package delivery
 
 import (
-	// "be11/apiclean/utils/helper"
-
 	"net/http"
 	"project/e-commerce/features/user"
 
 	// "project/e-commerce/middlewares"
 	"project/e-commerce/utils/helper"
 	"strconv"
-
-	// UserResponse "project/e-commerce/features/user/delivery"
 
 	"github.com/labstack/echo/v4"
 )
@@ -27,7 +23,7 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 	e.POST("/users", handler.PostData)   // Register User
 	e.GET("/users/:id", handler.GetData) //, middlewares.JWTMiddleware()) // Lihat Profile
 	e.PUT("/users/:id", handler.PostDataId)
-
+	e.DELETE("/users/:id", handler.DeleteAkun)
 }
 
 func (delivery *UserDelivery) PostData(c echo.Context) error {
@@ -50,6 +46,7 @@ func (delivery *UserDelivery) GetData(c echo.Context) error {
 
 	id := c.Param("id")
 	idConv, errConv := strconv.Atoi(id)
+
 	if errConv != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("param must be a number"))
 	}
@@ -66,6 +63,12 @@ func (delivery *UserDelivery) GetData(c echo.Context) error {
 func (delivery *UserDelivery) PostDataId(c echo.Context) error {
 	id := c.Param("id")
 	idConv, errConv := strconv.Atoi(id)
+	// idToken := middlewares.ExtractToken(c)
+
+	// if idToken != idConv {
+	// 	return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("you dont have acces"))
+	// }
+
 	if errConv != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("param must be a number"))
 	}
@@ -81,4 +84,24 @@ func (delivery *UserDelivery) PostDataId(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to update data"))
 	}
 	return c.JSON(http.StatusOK, helper.SuccessResponseHelper("success update data"))
+}
+
+func (delivery *UserDelivery) DeleteAkun(c echo.Context) error {
+	id := c.Param("id")
+	idConv, errConv := strconv.Atoi(id)
+	// idToken := middlewares.ExtractToken(c)
+
+	// if idToken != idConv {
+	// 	return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("you dont have acces"))
+	// }
+
+	if errConv != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("param must be a number"))
+	}
+
+	row, err := delivery.userUsecase.DeleteAkun(idConv)
+	if err != nil || row == 0 {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to delete account"))
+	}
+	return c.JSON(http.StatusOK, helper.SuccessResponseHelper("succes delte account"))
 }

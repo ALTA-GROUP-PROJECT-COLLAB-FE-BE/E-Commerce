@@ -38,3 +38,8 @@ func (usecase *userUsecase) PostDataId(data user.Core, id int) (int, error) {
 	row, err := usecase.userData.UpdateData(data, id)
 	return row, err
 }
+
+func (usecase *userUsecase) DeleteAkun(id int) (int, error) {
+	row, err := usecase.userData.DeleteData(id)
+	return row, err
+}
