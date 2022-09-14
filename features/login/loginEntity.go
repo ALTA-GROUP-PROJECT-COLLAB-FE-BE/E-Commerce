@@ -1,15 +1,15 @@
 package login
 
-type LoginCore struct {
-	ID       int
+type Core struct {
+	ID       uint
 	Email    string
 	Password string
 }
 
 type UsecaseInterface interface {
-	LoginAuthorized(email, password string) (string, error)
+	LoginAuthorized(email, password string) string
 }
 
 type DataInterface interface {
-	LoginUser(email, password string) (LoginCore, error)
+	LoginUser(email string) (Core, error)
 }

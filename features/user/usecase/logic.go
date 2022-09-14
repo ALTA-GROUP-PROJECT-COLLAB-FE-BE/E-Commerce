@@ -3,6 +3,8 @@ package usecase
 import (
 	"errors"
 	"project/e-commerce/features/user"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userUsecase struct {
@@ -17,14 +19,23 @@ func New(data user.DataInterface) user.UsecaseInterface {
 
 func (usecase *userUsecase) PostData(data user.Core) (int, error) {
 	if data.Name == "" {
-		return -1, errors.New("Masukan Nama !")
+		return -1, errors.New("masukan nama ")
 	}
 	if data.Email == "" {
-		return -1, errors.New("Masukan Email !")
+		return -1, errors.New("masukan email ")
 	}
 	if data.Password == "" {
-		return -1, errors.New("Masukann Password")
+		return -1, errors.New("masukann password")
 	}
+	hashPass, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return -1, err
+	}
+	data.Password = string(hashPass)
 	row, err := usecase.userData.InsertData(data)
-	return row, err
+	if err != nil {
+		return -1, err
+	}
+	// row, err := usecase.userData.InsertData(data)
+	return row, nil
 }

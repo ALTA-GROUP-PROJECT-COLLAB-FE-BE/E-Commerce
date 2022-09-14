@@ -1,51 +1,42 @@
 package usecase
 
 import (
-	"log"
 	"project/e-commerce/features/login"
 	"project/e-commerce/middlewares"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
-type loginUsecase struct {
-	dataLogin login.DataInterface
+type authUsecase struct {
+	authData login.DataInterface
 }
 
 func New(data login.DataInterface) login.UsecaseInterface {
-	return &loginUsecase{
-		dataLogin: data,
+	return &authUsecase{
+		authData: data,
 	}
 }
 
-func (usecase *loginUsecase) LoginAuthorized(email, password string) (string, error) {
+func (usecase *authUsecase) LoginAuthorized(email, password string) string {
 
-	var err error
 	if email == "" || password == "" {
-		return "", err
+		return "please input email and password"
 	}
 
-	results, errEmail := usecase.dataLogin.LoginUser(email, password)
+	results, errEmail := usecase.authData.LoginUser(email)
 	if errEmail != nil {
-		return "", errEmail
+		return "email not found"
 	}
 
-	errPw := bcrypt.CompareHashAndPassword([]byte(results.Password), []byte(password))
-	if errPw != nil {
-		log.Println("Error pw")
-		return "", err
-	}
+	// errPw := bcrypt.CompareHashAndPassword([]byte(results.Password), []byte(password))
+	// if errPw != nil {
+	// 	return "wrong password"
+	// }
 
 	token, errToken := middlewares.CreateToken(int(results.ID))
 
 	if errToken != nil {
-		return "", err
+		return "error to created token"
 	}
 
-	if token == "" {
-		return "", err
-	}
-
-	return token, nil
+	return token
 
 }
