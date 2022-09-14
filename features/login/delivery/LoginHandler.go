@@ -7,32 +7,35 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type LoginHandler struct {
-	userUsecase login.UsecaseInterface
+type AuthDelivery struct {
+	authUsecase login.UsecaseInterface
 }
 
 func New(e *echo.Echo, usecase login.UsecaseInterface) {
 
-	handler := LoginHandler{
-		userUsecase: usecase,
+	handler := AuthDelivery{
+		authUsecase: usecase,
 	}
 
-	e.POST("/login", handler.Login)
+	e.POST("/auth", handler.Auth)
 
 }
 
-func (h *LoginHandler) Login(c echo.Context) error {
+func (h *AuthDelivery) Auth(c echo.Context) error {
 
-	var req Request
+	var req AuthRequest
 	errBind := c.Bind(&req)
 	if errBind != nil {
-		return c.JSON(400, errBind)
+		return c.JSON(400, helper.FailedResponseHelper("wrong request"))
 	}
 
-	str, err := h.userUsecase.LoginAuthorized(req.Email, req.Password)
-	if err != nil {
-		return c.JSON(404, err)
+	str := h.authUsecase.LoginAuthorized(req.Email, req.Password)
+	if str == "please input email and password" || str == "email not found" || str == "wrong password" {
+		return c.JSON(400, helper.FailedResponseHelper(str))
+	} else if str == "failed to created token" {
+		return c.JSON(500, helper.FailedResponseHelper(str))
+	} else {
+		return c.JSON(200, helper.SuccessDataResponseHelper("Login Success", str))
 	}
-	return c.JSON(200, helper.SuccessDataResponseHelper("Login Success", str))
 
 }
