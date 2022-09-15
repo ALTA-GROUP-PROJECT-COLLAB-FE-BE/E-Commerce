@@ -11,7 +11,7 @@ type User struct {
 	Name     string
 	PPicture string
 	Username string
-	Email    string
+	Email    string `gorm:unique`
 	Password string
 }
 

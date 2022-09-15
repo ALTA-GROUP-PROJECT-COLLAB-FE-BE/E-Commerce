@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"project/e-commerce/features/user"
 
-	// "project/e-commerce/middlewares"
+	"project/e-commerce/middlewares"
 	"project/e-commerce/utils/helper"
 	"strconv"
 
@@ -20,10 +20,10 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 	handler := &UserDelivery{
 		userUsecase: usecase,
 	}
-	e.POST("/users", handler.PostData)   // Register User
-	e.GET("/users/:id", handler.GetData) //, middlewares.JWTMiddleware()) // Lihat Profile
-	e.PUT("/users/:id", handler.PostDataId)
-	e.DELETE("/users/:id", handler.DeleteAkun)
+	e.POST("/registration", handler.PostData)                                       // Daftar akun
+	e.GET("/readprofile/:id", handler.GetData, middlewares.JWTMiddleware())         // Lihat Profile
+	e.PUT("/updateprofile/:id", handler.PostDataId, middlewares.JWTMiddleware())    // Update Akun
+	e.DELETE("/deleteaccount/:id", handler.DeleteAkun, middlewares.JWTMiddleware()) // Delte Akun
 }
 
 func (delivery *UserDelivery) PostData(c echo.Context) error {
@@ -68,11 +68,11 @@ func (delivery *UserDelivery) GetData(c echo.Context) error {
 func (delivery *UserDelivery) PostDataId(c echo.Context) error {
 	id := c.Param("id")
 	idConv, errConv := strconv.Atoi(id)
-	// idToken := middlewares.ExtractToken(c)
+	idToken := middlewares.ExtractToken(c)
 
-	// if idToken != idConv {
-	// 	return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("you dont have acces"))
-	// }
+	if idToken != idConv {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("you dont have acces"))
+	}
 
 	if errConv != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("param must be a number"))
@@ -94,11 +94,11 @@ func (delivery *UserDelivery) PostDataId(c echo.Context) error {
 func (delivery *UserDelivery) DeleteAkun(c echo.Context) error {
 	id := c.Param("id")
 	idConv, errConv := strconv.Atoi(id)
-	// idToken := middlewares.ExtractToken(c)
+	idToken := middlewares.ExtractToken(c)
 
-	// if idToken != idConv {
-	// 	return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("you dont have acces"))
-	// }
+	if idToken != idConv {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("you dont have acces"))
+	}
 
 	if errConv != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("param must be a number"))
