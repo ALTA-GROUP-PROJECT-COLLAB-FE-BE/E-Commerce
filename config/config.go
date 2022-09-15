@@ -10,7 +10,7 @@ import (
 type AppConfig struct {
 	SERVER_PORT int
 	DB_DRIVER   string
-	DB_HOST     string // database-1.crmvplgmbxrx.us-west-1.rds.amazonaws.com
+	DB_HOST     string
 	DB_USERNAME string
 	DB_PORT     int
 	DB_PASSWORD string
