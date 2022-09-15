@@ -25,3 +25,13 @@ func (repo *orderData) InsertData(data order.Core) (int, error) {
 
 	return int(tx.RowsAffected), nil
 }
+
+func (repo *orderData) SelectData(id int) ([]order.Core, error) {
+	var data []Order
+	tx := repo.db.Find(&data).Where("UserID = ?", id)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	dataCore := toCoreList(data)
+	return dataCore, nil
+}
