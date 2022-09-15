@@ -19,10 +19,10 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/ubuntu/deployment
+            cd /home/ubuntu/E-Commerce
             git pull origin main
-            docker stop projectApi
-            docker rm ProjectApi
+            docker stop projectcon
+            docker rm projectcon
             docker rmi project
             docker build -t project:latest .
             docker run -d -p 8000:8000 -e SERVER_PORT=${{ secrets.SERVER_PORT }} -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} --name projectApi project:latest

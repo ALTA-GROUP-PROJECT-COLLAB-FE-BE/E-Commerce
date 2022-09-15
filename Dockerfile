@@ -9,6 +9,6 @@ WORKDIR /app
 # copy all files to /app
 COPY . .
 
-RUN go build -o /E-Commerce
+RUN go build -o /project-2/skeleton
 
-CMD [ "./E-Commerce" ]
+CMD [ "./project-2/skeleton" ]
