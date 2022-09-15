@@ -23,9 +23,9 @@ func NewProductHandler(e *echo.Echo, productBusiness product.Business) {
 	}
 	e.POST("/product", handler.PostProduct, middlewares.JWTMiddleware())
 	e.GET("/product", handler.GetAll)
-	e.PUT("/product/:id", handler.PostProduct, middlewares.JWTMiddleware())
-	e.GET("/product/:id", handler.PostProduct, middlewares.JWTMiddleware())
-	e.GET("/product/me", handler.PostProduct, middlewares.JWTMiddleware()) //endpoint untuk melihat profile
+	e.PUT("/product/:id", handler.PutProduct, middlewares.JWTMiddleware())
+	e.GET("/product/:id", handler.GetById, middlewares.JWTMiddleware())
+	e.GET("/product/me", handler.GetByMe, middlewares.JWTMiddleware()) //endpoint untuk melihat profile
 	e.DELETE("/product/:id", handler.DeleteById, middlewares.JWTMiddleware())
 
 }
