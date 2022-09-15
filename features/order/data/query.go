@@ -10,7 +10,7 @@ type orderData struct {
 	db *gorm.DB
 }
 
-func new(db *gorm.DB) order.DataInterface {
+func New(db *gorm.DB) order.DataInterface {
 	return &orderData{
 		db: db,
 	}
