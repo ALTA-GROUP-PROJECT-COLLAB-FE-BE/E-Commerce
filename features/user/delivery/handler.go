@@ -20,10 +20,10 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 	handler := &UserDelivery{
 		userUsecase: usecase,
 	}
-	e.POST("/users", handler.PostData)                                // Register User
-	e.GET("/users/:id", handler.GetData, middlewares.JWTMiddleware()) // Lihat Profile
-	e.PUT("/users/:id", handler.PostDataId, middlewares.JWTMiddleware())
-	e.DELETE("/users/:id", handler.DeleteAkun, middlewares.JWTMiddleware())
+	e.POST("/registration", handler.PostData)                                       // Daftar akun
+	e.GET("/readprofile/:id", handler.GetData, middlewares.JWTMiddleware())         // Lihat Profile
+	e.PUT("/updateprofile/:id", handler.PostDataId, middlewares.JWTMiddleware())    // Update Akun
+	e.DELETE("/deleteaccount/:id", handler.DeleteAkun, middlewares.JWTMiddleware()) // Delte Akun
 }
 
 func (delivery *UserDelivery) PostData(c echo.Context) error {
