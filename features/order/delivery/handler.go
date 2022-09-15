@@ -14,7 +14,7 @@ type OrderDelivery struct {
 	orderUsecase order.UsecaseInterface
 }
 
-func New(e echo.Echo, usecase order.UsecaseInterface) {
+func New(e *echo.Echo, usecase order.UsecaseInterface) {
 	handler := &OrderDelivery{
 		orderUsecase: usecase,
 	}
