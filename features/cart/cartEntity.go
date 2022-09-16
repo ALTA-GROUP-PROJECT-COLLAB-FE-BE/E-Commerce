@@ -29,8 +29,8 @@ type Product struct {
 
 type User struct {
 	ID    int
-	Name  int
-	Email int
+	Name  string
+	Email string
 }
 
 type Business interface {

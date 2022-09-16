@@ -26,11 +26,6 @@ func (usecase *authUsecase) LoginAuthorized(email, password string) string {
 		return "email not found"
 	}
 
-	// errPw := bcrypt.CompareHashAndPassword([]byte(results.Password), []byte(password))
-	// if errPw != nil {
-	// 	return "wrong password"
-	// }
-
 	token, errToken := middlewares.CreateToken(int(results.ID))
 
 	if errToken != nil {
