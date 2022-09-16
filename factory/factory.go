@@ -34,15 +34,15 @@ func InitFactory(e *echo.Echo, db *gorm.DB) {
 	productUsecase := productUseCase.NewProductBusiness(productData)
 	productDelivery.NewProductHandler(e, productUsecase)
 
-	cartDataFactory := cartData.NewCartRepo(db)
-	cartUsecase := cartUsecase.NewCartUsecase(cartDataFactory)
+	cartDataFactory := cartData.NewCartRepository(db)
+	cartUsecase := cartUsecase.NewCartBusiness(cartDataFactory)
 	cartDelivery.NewCartHandler(e, cartUsecase)
 
 	authDataFactory := loginData.New(db)
 	authUsecaseFactory := authUsecase.New(authDataFactory)
 	authDelivery.New(e, authUsecaseFactory)
 
-	orderDataFactory := orderData.New(db)
-	orderUsecaseFactory := orderUsecase.New(orderDataFactory)
-	orderDelivery.New(e, orderUsecaseFactory)
+	orderDataFactory := orderData.NewOrderRepository(db)
+	orderUsecase := orderUsecase.NewOrderBusiness(orderDataFactory)
+	orderDelivery.NewOrderHandler(e, orderUsecase)
 }

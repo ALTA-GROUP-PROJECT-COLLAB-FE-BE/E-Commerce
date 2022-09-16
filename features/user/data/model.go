@@ -11,7 +11,7 @@ type User struct {
 	Name     string
 	PPicture string
 	Username string
-	Email    string `gorm:unique`
+	Email    string `gorm:"unique"`
 	Password string
 }
 
@@ -39,7 +39,7 @@ func (data *User) toCore() user.Core {
 
 }
 
-func toCoreList(data []User) []user.Core {
+func ToCoreList(data []User) []user.Core {
 	var dataCore []user.Core
 	for key := range data {
 		dataCore = append(dataCore, data[key].toCore())

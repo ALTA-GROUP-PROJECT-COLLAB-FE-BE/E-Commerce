@@ -32,10 +32,6 @@ func (delivery *UserDelivery) PostData(c echo.Context) error {
 	if errBind != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("error binding data"))
 	}
-	// var userCoreData = entities.RequestToCore(userData)
-	// inputPassByte := []byte(userCoreData.Password)
-	// hashPass, _ := bcrypt.GenerateFromPassword(inputPassByte, bcrypt.DefaultCost)
-	// userCoreData.Password = string(hashPass)
 
 	row, err := delivery.userUsecase.PostData(toCore(dataRequest))
 	if err != nil {

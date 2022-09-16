@@ -36,7 +36,7 @@ func (usecase *userUsecase) PostData(data user.Core) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	// row, err := usecase.userData.InsertData(data)
+
 	return row, nil
 }
 

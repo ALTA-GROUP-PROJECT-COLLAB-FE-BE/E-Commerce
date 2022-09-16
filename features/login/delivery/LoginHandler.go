@@ -17,7 +17,7 @@ func New(e *echo.Echo, usecase login.UsecaseInterface) {
 		authUsecase: usecase,
 	}
 
-	e.POST("/auth", handler.Auth)
+	e.POST("/login", handler.Auth)
 
 }
 

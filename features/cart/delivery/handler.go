@@ -2,20 +2,21 @@ package delivery
 
 import (
 	"net/http"
-	"project/e-commerce/features/cart"
-	requestCart "project/e-commerce/features/cart/delivery/request"
-	"project/e-commerce/middlewares"
-	"project/e-commerce/utils/helper"
+	Fcart "project/e-commerce/features/cart"
+	_requestCart "project/e-commerce/features/cart/delivery/request"
+	_responseCart "project/e-commerce/features/cart/delivery/response"
+	middlewares "project/e-commerce/middlewares"
+	_helper "project/e-commerce/utils/helper"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 type CartHandler struct {
-	cartBusiness cart.Business
+	cartBusiness Fcart.Business
 }
 
-func NewCartHandler(e *echo.Echo, cartBusiness cart.Business) {
+func NewCartHandler(e *echo.Echo, cartBusiness Fcart.Business) {
 	handler := &CartHandler{
 		cartBusiness: cartBusiness,
 	}
@@ -25,73 +26,74 @@ func NewCartHandler(e *echo.Echo, cartBusiness cart.Business) {
 	e.DELETE("/cart/:id", handler.DeleteCart, middlewares.JWTMiddleware())
 
 }
-
 func (h *CartHandler) GetAll(c echo.Context) error {
 	limit := c.QueryParam("limit")
 	offset := c.QueryParam("offset")
-	IntLimit, _ := strconv.Atoi(limit)
-	IntOffset, _ := strconv.Atoi(offset)
+	limitint, _ := strconv.Atoi(limit)
+	offsetint, _ := strconv.Atoi(offset)
 	idFromToken := middlewares.ExtractToken(c)
-	result, err := h.cartBusiness.GetAllData(IntLimit, IntOffset, idFromToken)
+	result, err := h.cartBusiness.GetAllData(limitint, offsetint, idFromToken)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed get all data"))
+		return c.JSON(http.StatusInternalServerError, _helper.FailedResponseHelper("failed to get all data"))
 	}
-	return c.JSON(http.StatusOK, helper.SuccessDataResponseHelper("success get data", result))
+
+	return c.JSON(http.StatusOK, _helper.SuccessDataResponseHelper("success get all carts", _responseCart.FromCoreList(result)))
 }
 
 func (h *CartHandler) PostCart(c echo.Context) error {
 	idFromToken := middlewares.ExtractToken(c)
-	cartReq := requestCart.Cart{}
+	cartReq := _requestCart.Cart{}
 	err := c.Bind(&cartReq)
 	if err != nil {
-		return c.JSON(200, helper.FailedResponseHelper("failed to get data check your input"))
+		return c.JSON(http.StatusInternalServerError, _helper.FailedResponseHelper("failed to bind data, check your input"))
 	}
-	dataCart := cart.Core{}
+	dataCart := Fcart.Core{}
 	dataCart.Product.ID = cartReq.IdProduct
 	dataCart.Qty = cartReq.Qty
-	dataCart.Status = "On Process"
+	dataCart.Status = "on process"
 	dataCart.UserID = idFromToken
 	row, errCreate := h.cartBusiness.CreateData(dataCart)
 	if row == -1 {
-		return c.JSON(400, helper.FailedResponseHelper("column cannot be empty"))
+		return c.JSON(http.StatusBadRequest, _helper.FailedResponseHelper("please make sure all fields are filled in correctly"))
 	}
 	if errCreate != nil {
-		return c.JSON(406, helper.FailedResponseHelper("failed add to cart"))
+		return c.JSON(http.StatusInternalServerError, _helper.FailedResponseHelper("failed to add to cart"))
 	}
-	return c.JSON(200, helper.SuccessResponseHelper("success"))
+
+	return c.JSON(http.StatusOK, _helper.SuccessResponseHelper("success add to cart"))
 }
 
 func (h *CartHandler) UpdateCart(c echo.Context) error {
 	id := c.Param("id")
-	cartId, _ := strconv.Atoi(id)
-	idToken := middlewares.ExtractToken(c)
-	reqC := requestCart.Cart{}
-	err := c.Bind(&reqC)
+	idCart, _ := strconv.Atoi(id)
+	idFromToken := middlewares.ExtractToken(c)
+	cartReq := _requestCart.Cart{}
+	err := c.Bind(&cartReq)
 
 	if err != nil {
-		return c.JSON(400, helper.FailedResponseHelper("failed to get data check your input"))
+		return c.JSON(http.StatusBadRequest, _helper.FailedResponseHelper("failed to bind data, check your input"))
 	}
-	qty := reqC.Qty
-	row, errUp := h.cartBusiness.UpdateData(qty, cartId, idToken)
-	if errUp != nil {
-		return c.JSON(401, helper.FailedResponseHelper("you can't access"))
+	qty := cartReq.Qty
+	row, errUpd := h.cartBusiness.UpdateData(qty, idCart, idFromToken)
+	if errUpd != nil {
+		return c.JSON(http.StatusInternalServerError, _helper.FailedResponseHelper("you dont have access"))
 	}
 	if row == 0 {
-		return c.JSON(400, helper.FailedResponseHelper("failed to update data"))
+		return c.JSON(http.StatusBadRequest, _helper.FailedResponseHelper("failed to update data"))
 	}
-	return c.JSON(200, helper.SuccessResponseHelper("succes to update data"))
+	return c.JSON(http.StatusOK, _helper.SuccessResponseHelper("success update cart"))
 }
 
 func (h *CartHandler) DeleteCart(c echo.Context) error {
 	id := c.Param("id")
-	prodId, _ := strconv.Atoi(id)
-	tokenId := middlewares.ExtractToken(c)
-	row, delEr := h.cartBusiness.DeleteData(prodId, tokenId)
-	if delEr != nil {
-		return c.JSON(401, helper.FailedResponseHelper("you can't access"))
+	idProd, _ := strconv.Atoi(id)
+	idFromToken := middlewares.ExtractToken(c)
+	row, errDel := h.cartBusiness.DeleteData(idProd, idFromToken)
+	if errDel != nil {
+		return c.JSON(http.StatusInternalServerError, _helper.FailedResponseHelper("you dont have access"))
 	}
 	if row != 1 {
-		return c.JSON(400, helper.FailedResponseHelper("failed to delete data"))
+		return c.JSON(http.StatusBadRequest, _helper.FailedResponseHelper("failed to delete data user"))
 	}
-	return c.JSON(200, helper.SuccessResponseHelper("success to delete data"))
+	return c.JSON(http.StatusOK, _helper.SuccessResponseHelper("success delete cart"))
 }
