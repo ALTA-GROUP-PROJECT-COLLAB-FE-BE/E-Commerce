@@ -1,4 +1,4 @@
-package business
+package usecase
 
 import (
 	"errors"

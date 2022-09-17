@@ -85,3 +85,28 @@ func TestGetAll(t *testing.T) {
 	})
 
 }
+
+func TestUpdateData(t *testing.T) {
+	repo := new(mocks.CartData)
+
+	t.Run("Success Update data", func(t *testing.T) {
+		repo.On("UpdateDataDB", mock.Anything, mock.Anything, mock.Anything).Return(1, nil).Once()
+
+		usecase := NewCartBusiness(repo)
+
+		result, err := usecase.UpdateData(1, 1, 1)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, result)
+		repo.AssertExpectations(t)
+	})
+	t.Run("Failed Update data", func(t *testing.T) {
+		repo.On("UpdateDataDB", mock.Anything, mock.Anything, mock.Anything).Return(-1, errors.New("Error")).Once()
+
+		usecase := NewCartBusiness(repo)
+
+		result, err := usecase.UpdateData(1, 1, 1)
+		assert.Error(t, err)
+		assert.Equal(t, -1, result)
+		repo.AssertExpectations(t)
+	})
+}
